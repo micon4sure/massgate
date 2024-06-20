@@ -120,6 +120,15 @@ MDB_MySqlConnection::Connect()
 			myLastErrorString = "Unknown option: MYSQL_OPT_CONNECT_TIMEOUT";
 		if (0 != mysql_options(mySqlHandle, MYSQL_READ_DEFAULT_GROUP, "massgate"))
 			myLastErrorString = "Unknown option: MYSQL_READ_DEFAULT_GROUP";
+
+		// Disable SSL
+		unsigned int ssl_mode = SSL_MODE_DISABLED;
+		if (mysql_options(mySqlHandle, MYSQL_OPT_SSL_MODE, &ssl_mode) != 0)
+		{
+			myLastErrorString = "Could not disable SSL";
+			LOG_ERROR("Error while setting SSL mode: %s", mysql_error(mySqlHandle));
+		}
+
 		if (mySqlHandle == mysql_real_connect(mySqlHandle, myServername, myUsername, myPassword, myDatabasename, 0, NULL, 0))
 		{
 			static bool hasWrittenConnectionInfo = false;

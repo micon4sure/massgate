@@ -19,7 +19,7 @@
 #	ifdef NDEBUG
 #		define USE_FAST_X86_STACKWALK	0
 #	else
-#		define USE_FAST_X86_STACKWALK	1
+#		define USE_FAST_X86_STACKWALK	0
 #	endif
 
 #if USE_STACKWALKER
@@ -224,15 +224,11 @@ protected:
 #else
 // The following should be enough for walking the callstack...
 #define GET_CURRENT_CONTEXT(c, contextFlags) \
-	do { \
-	memset(&c, 0, sizeof(CONTEXT)); \
-	c.ContextFlags = contextFlags; \
-	__asm    call x \
-	__asm x: pop eax \
-	__asm    mov c.Eip, eax \
-	__asm    mov c.Ebp, ebp \
-	__asm    mov c.Esp, esp \
-	} while(0);
+		do { \
+		memset(&c, 0, sizeof(CONTEXT)); \
+		c.ContextFlags = contextFlags; \
+		RtlCaptureContext(&c); \
+		} while(0);
 #endif
 
 #else

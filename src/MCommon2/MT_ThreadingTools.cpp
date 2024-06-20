@@ -22,6 +22,7 @@
 #include "MT_Thread.h"
 #include "MC_debug.h"
 #include "MC_StackWalker.h"
+#include <intrin.h>
 
 void MC_Sleep(int aMillis)
 {
@@ -47,42 +48,25 @@ void MC_Yield()
 
 unsigned int MT_ThreadingTools::GetLogicalProcessorCount()
 {
-#if IS_PC_BUILD	// PC specific
+#if IS_PC_BUILD  // PC specific
 	// Intel ref: http://cache-www.intel.com/cd/00/00/27/66/276611_276611.txt
 	// AMD ref: http://www.amd.com/us-en/assets/content_type/white_papers_and_tech_docs/25481.pdf#search=%22amd%20cpuid%20specification%22
 
-	unsigned int maxInputValue = 0;
+	int cpuInfo[4] = { 0 };
 
 	// Get standard max input value and vendor ID string ("AuthenticAMD" or "GenuineIntel").
-	__asm		
-	{
-		xor eax, eax
-    	cpuid
-		mov maxInputValue, eax
-	}		
+	__cpuid(cpuInfo, 0);
+	unsigned int maxInputValue = cpuInfo[0];
 
-	if(maxInputValue < 1)
+	if (maxInputValue < 1)
 		return 1;
 
-	unsigned int htt;
-	unsigned int logicalProcessorCount;
-
-	__asm
-	{
-		mov eax, 1
-		cpuid
-
-		shr ebx, 16
-		and ebx, 255
-		mov logicalProcessorCount, ebx
-
-		shr edx, 28
-		and edx, 1
-		mov htt, edx
-	}
+	__cpuid(cpuInfo, 1);
+	unsigned int logicalProcessorCount = (cpuInfo[1] >> 16) & 0xFF;
+	unsigned int htt = (cpuInfo[3] >> 28) & 0x1;
 
 	// When HTT=0, LogicalProcessorCount is reserved and the processor contains one CPU core and that one CPU core is single-threaded.
-	if(!htt)
+	if (!htt)
 		return 1;
 
 	return logicalProcessorCount;
@@ -94,30 +78,16 @@ unsigned int MT_ThreadingTools::GetLogicalProcessorCount()
 
 unsigned int MT_ThreadingTools::GetProcessorAPICID()
 {
-#if IS_PC_BUILD	// PC specific function
-	//  In EBX, bits 31..24 gives the default APIC ID, bits 23..16 gives Logical
-	//  Processor Count, bits 15..8 gives the Cache Flush Chunk size and
-	//  bits 7..0 give away the Brand ID(Only Pentium III and upwards).
+#if IS_PC_BUILD  // PC specific function
+	int cpuInfo[4] = { 0 };
 
-	// Initial APIC ID. This field contains the initial value of the processor’s local APIC
-	// physical ID register. This value is composed of the Northbridge NodeID (bits 26–24)
-	// and the CPU number within the node (bits 31–27). Subsequent writes by software to
-	// the local APIC physical ID register do not change the value of the initial APIC ID field.
+	// Get the CPU information for function 1
+	__cpuid(cpuInfo, 1);
 
-	unsigned int extraInfo;
+	// Extract the APIC ID from EBX (stored in cpuInfo[1])
+	unsigned int extraInfo = cpuInfo[1];
 
-	__asm push eax
-	__asm push ebx
-	__asm push ecx
-	__asm push edx
-	__asm mov eax, 1
-	__asm cpuid
-	__asm mov extraInfo, ebx
-	__asm pop edx
-	__asm pop ecx
-	__asm pop ebx
-	__asm pop eax
-
+	// Return the APIC ID (bits 31..24 of EBX)
 	return (extraInfo >> 24) & 255;
 #else
 	return 0;
@@ -353,7 +323,7 @@ void MT_ThreadingTools::SetCurrentThreadName(const char* aName)
 	info.dwFlags = 0;
 
 	__try{
-		RaiseException(0x406D1388, 0, sizeof(info)/sizeof(DWORD), (DWORD*)&info);
+		RaiseException(0x406D1388, 0, sizeof(info)/sizeof(DWORD), (ULONG_PTR*)&info);
 	}
 	__except (EXCEPTION_CONTINUE_EXECUTION)
 	{

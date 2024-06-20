@@ -24,6 +24,7 @@
 #include "MC_HashMap.h"
 #include "MC_Misc.h"
 #include <io.h>
+#include <intrin.h>  // Include the intrin header for __cpuid intrinsic
 
 static const char* const locBuildInfo = "\n\n\n\n\n\n\n\n\n\nBuilt by " MC_STRINGIFY(MC_USERNAME) "/" MC_STRINGIFY(MC_COMPUTERNAME) " at " __TIME__ " on " __DATE__ " with compiler version " MC_STRINGIFY(_MSC_VER) ".\n\0\0\n\n\n\n\n\n\n\n\n";
 
@@ -571,10 +572,10 @@ void MC_Debug::DebugMessageNoFormat(const char* aMessage)
 {
 #ifndef MC_NO_DEBUG_FILE_OUTPUT
 	_InterlockedIncrement(&locNumConcurrentOutputs);
-	for( int i=0; i<locNumDebugListeners; i++ )
-		if (locOurDebugListeners[i].active)
-			locOurDebugListeners[i].listener->DebugMessage( aMessage );
-	_InterlockedDecrement(&locNumConcurrentOutputs);
+//	for( int i=0; i<locNumDebugListeners; i++ )
+//		if (locOurDebugListeners[i].active)
+//			locOurDebugListeners[i].listener->DebugMessage( aMessage );
+//	_InterlockedDecrement(&locNumConcurrentOutputs);
 
 #endif
 }
@@ -855,7 +856,7 @@ void MC_Debug::ErrorMessageNoFormat( const char* aMessage, const char* aCodeLine
 	}
 
 	// Output debug to file.
-	if (shhh == false)
+	if (false&& shhh == false)
 	{
 		MC_StaticString<32*1024> longRow;
 		longRow[0] = 0;
@@ -1410,29 +1411,13 @@ const char* MC_GetOperatingSystemCountry()
 static void CPUID(unsigned int func, unsigned int& a, unsigned int& b, unsigned int& c, unsigned int& d)
 {
 #if IS_PC_BUILD
-	unsigned int _a, _b, _c, _d, _func;
+	int cpuInfo[4];  // Array to store the result
+	__cpuid(cpuInfo, func);
 
-	_func = func;
-
-	__asm push eax
-	__asm push ebx
-	__asm push ecx
-	__asm push edx
-	__asm mov eax, _func
-	__asm cpuid
-	__asm mov _a, eax
-	__asm mov _b, ebx
-	__asm mov _c, ecx
-	__asm mov _d, edx
-	__asm pop edx
-	__asm pop ecx
-	__asm pop ebx
-	__asm pop eax
-
-	a = _a;
-	b = _b;
-	c = _c;
-	d = _d;
+	a = cpuInfo[0];
+	b = cpuInfo[1];
+	c = cpuInfo[2];
+	d = cpuInfo[3];
 #else
 	a = b = c = d = 0;
 #endif
@@ -1506,7 +1491,7 @@ const char* MC_Debug::GetSystemInfoString()
 	aString += temp.Format("Logical processor count:  %u\n", cpuMetric.cpuCount);
 
 #if IS_PC_BUILD
-	DWORD processAffinityMask, systemAffinityMask;
+	DWORD_PTR processAffinityMask, systemAffinityMask;
 	if(::GetProcessAffinityMask(::GetCurrentProcess(), &processAffinityMask, &systemAffinityMask))
 	{
 		aString += temp.Format("Process Affinity Mask:    0x%08x\n", processAffinityMask);

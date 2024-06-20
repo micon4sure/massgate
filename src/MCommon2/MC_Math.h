@@ -18,6 +18,7 @@
 #define INCGUARD_MC_MATH_H
 
 #include "mc_globaldefines.h"
+#include <cmath>
 #include <math.h>
 #include <xmmintrin.h>
 #pragma intrinsic( cos, sin, sqrt )
@@ -69,42 +70,18 @@ MC_FORCEINLINE float MC_InvSqrtFastSafe_Estimate(float x)
 
 MC_FORCEINLINE void __fastcall MC_SinCos(float angle, float* s, float* c)
 {
-	__asm
-	{
-		mov      ecx, c
-		mov      edx, s
-
-		fld      dword ptr [angle]
-		fsincos
-		fstp     dword ptr [ecx]
-		fstp     dword ptr [edx]
-	}
-	*s = (float)sin(angle);
-	*c = (float)cos(angle);
+	*s = std::sin(angle);
+	*c = std::cos(angle);
 }
 
 MC_FORCEINLINE void __fastcall MC_SinCosVec(float angleA, float angleB, float angleC, float* sinvals, float* cosvals)
 {
-	__asm
-	{
-		mov      ecx, cosvals
-		mov      edx, sinvals
-
-		fld      dword ptr [angleA]
-		fsincos
-		fstp     dword ptr [ecx]
-		fstp     dword ptr [edx]
-
-		fld      dword ptr [angleB]
-		fsincos
-		fstp     dword ptr [ecx+4]
-		fstp     dword ptr [edx+4]
-
-		fld      dword ptr [angleC]
-		fsincos
-		fstp     dword ptr [ecx+8]
-		fstp     dword ptr [edx+8]
-	}
+	sinvals[0] = std::sin(angleA);
+	cosvals[0] = std::cos(angleA);
+	sinvals[1] = std::sin(angleB);
+	cosvals[1] = std::cos(angleB);
+	sinvals[2] = std::sin(angleC);
+	cosvals[2] = std::cos(angleC);
 }
 
 #endif//INCGUARD_MC_MATH_H

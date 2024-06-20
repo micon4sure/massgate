@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #include "stdafx.h"
+#include <intrin.h>  // Include for __rdtsc
 
 #if IS_PC_BUILD
 	#include <mmsystem.h>
@@ -304,20 +305,7 @@ bool MI_Time::GetQPC(MI_TimeUnit* aReturnTime)
 
 void __stdcall MI_Time::GetRDTSC(MI_TimeUnit* aReturnTime)
 {
-	__asm
-	{
-		push edx
-		push ecx
-		push eax
-		mov ecx, aReturnTime
-		_emit 0x0f
-		_emit 0x31
-		mov [ecx], eax
-		mov [ecx+4], edx
-		pop eax
-		pop ecx
-		pop edx
-	}
+	*aReturnTime = __rdtsc();
 }
 
 float MI_Time::ConvertTimeToSeconds(const MI_TimeUnit& aTime)

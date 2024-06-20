@@ -44,7 +44,7 @@ void			MC_GetFreeMemoryDescription(char* writeHere);
 #define assert(X) do { \
 			static bool ignoreAlwaysFlag = false; \
 			if(!(X) && !ignoreAlwaysFlag && MC_Assert(__FILE__, __LINE__, #X, &ignoreAlwaysFlag)) \
-				_asm { int 3 } \
+                __debugbreak(); \
 		} while(0)	
 	
 	#else
@@ -188,7 +188,7 @@ private:
 			#define assert(X) do { \
 				static bool ignoreAlwaysFlag = false; \
 				if(!(X) && !ignoreAlwaysFlag && MC_Assert(__FILE__, __LINE__, #X, &ignoreAlwaysFlag)) \
-				_asm { int 3 } \
+                __debugbreak(); \
 			} while(0)	
 		#else
 			#define assert(X) do {} while(0)

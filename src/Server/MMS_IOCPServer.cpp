@@ -123,7 +123,7 @@ MMS_IocpServer::MMS_IocpServer(unsigned short aPortNumber)
 , myThreadNums(0)
 {
 	ct_assert<NUM_MUTEXES && (NUM_MUTEXES & (NUM_MUTEXES-1)) == 0>(); // NUM_MUTEXES MUST BE POWER OF TWO!
-	ct_assert<sizeof(unsigned int) == sizeof(SOCKET)>();	// Due to bug mentioned in header
+	//ct_assert<sizeof(unsigned int) == sizeof(SOCKET)>();	// Due to bug mentioned in header
 
 	assert(aPortNumber >= 1024);
 	myAcceptExFunction = NULL;

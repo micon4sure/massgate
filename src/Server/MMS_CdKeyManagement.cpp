@@ -40,6 +40,8 @@
 #include "mf_file.h"
 #include <conio.h>
 #include <sys/timeb.h>
+#include <cstring>
+#include <cassert>
 
 /* 
 A C-program for MT19937, with initialization improved 2002/1/26.
@@ -201,6 +203,11 @@ bool ContainsBadWord(const char* aString)
 }
 
 
+inline unsigned char RotateRight(unsigned char value, unsigned int count)
+{
+	return (value >> count) | (value << (8 - count));
+}
+
 void MMS_GetInitializationBuffer(char buffer[24])
 {
 	const char* theErrorString = "MC_Debug::DebugMessage(false && \"Should never get here. Please double-check the implementation! numAllocated must be < MAX_NUM_ALLOCATED.\");";
@@ -212,13 +219,13 @@ void MMS_GetInitializationBuffer(char buffer[24])
 	int i = 0;
 	while (theErrorString[i])
 	{
-		unsigned char theChar = theErrorString[i];
-		switch(i&3)
+		unsigned char theChar = static_cast<unsigned char>(theErrorString[i]);
+		switch (i & 3)
 		{
-			case 0: __asm { ror theChar,2 }; break;
-			case 1: __asm { ror theChar,3 }; break;
-			case 2: __asm { ror theChar,4 }; break;
-			case 3: __asm { ror theChar,5 }; break;
+		case 0: theChar = RotateRight(theChar, 2); break;
+		case 1: theChar = RotateRight(theChar, 3); break;
+		case 2: theChar = RotateRight(theChar, 4); break;
+		case 3: theChar = RotateRight(theChar, 5); break;
 		};
 		buffer[i % 24] ^= theChar;
 		i++;

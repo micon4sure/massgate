@@ -1,2 +1,2 @@
 cd /d "%~dp0\share\www-root"
-python.exe -m SimpleHTTPServer 80
+C:\python27\python.exe -m SimpleHTTPServer 80
