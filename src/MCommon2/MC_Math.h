@@ -18,6 +18,7 @@
 #define INCGUARD_MC_MATH_H
 
 #include "mc_globaldefines.h"
+#include <cmath>
 #include <math.h>
 #include <xmmintrin.h>
 #pragma intrinsic(cos, sin, sqrt)
@@ -66,7 +67,13 @@ MC_FORCEINLINE float MC_InvSqrtFastSafe_Estimate(float x)
 #endif
 }
 
-MC_FORCEINLINE void MC_SinCosVec(float angleA, float angleB, float angleC, float *sinvals, float *cosvals)
+MC_FORCEINLINE void __fastcall MC_SinCos(float angle, float *s, float *c)
+{
+	*s = std::sin(angle);
+	*c = std::cos(angle);
+}
+
+MC_FORCEINLINE void __fastcall MC_SinCosVec(float angleA, float angleB, float angleC, float *sinvals, float *cosvals)
 {
 	cosvals[0] = cosf(angleA);
 	sinvals[0] = sinf(angleA);

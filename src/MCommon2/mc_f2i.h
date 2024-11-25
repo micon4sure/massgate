@@ -29,116 +29,43 @@
 
 __forceinline int TruncToInt(const float aFloat)
 {
-/*#ifdef _MSC_VER
-	int i;
-	aFloat -= 0.5f;
-	__asm
-	{
-		fld aFloat
-		fistp i
-	}
-	return i;
-#else // not _MSC_VER*/
 	return (int) aFloat;
-//#endif // not _MSC_VER
 }
 
 
 __forceinline static void TruncToInt(int* anInt, const float aFloat)
 {
-/*#ifdef _MSC_VER
-	aFloat -= 0.5f;
-	__asm
-	{
-		fld aFloat
-		mov eax, anInt
-		fistp dword ptr [eax]
-	}
-#else // not _MSC_VER*/
 	*anInt = (int) aFloat;
-//#endif // not _MSC_VER
 }
 
 
 __forceinline static void TruncToUnsignedInt(unsigned int* anInt, const float aFloat)
 {
-/*#ifdef _MSC_VER
-	aFloat -= 0.5f;
-	__asm
-	{
-		fld aFloat
-		mov eax, anInt
-		fistp dword ptr [eax]
-	}
-#else // not _MSC_VER*/
 	*anInt = (int) aFloat;
-//#endif // not _MSC_VER
 }
 
 
 __forceinline static void RoundToInt(int* anInt, const float aFloat)
 {
-/*#ifdef _MSC_VER
-	__asm
-	{
-		fld aFloat
-		mov eax, anInt
-		fistp dword ptr [eax]
-	}
-	assert(*anInt == (int) (aFloat + 0.5f));
-#else // not _MSC_VER*/
 	*anInt = (int) (aFloat + 0.5f);
-//#endif // not _MSC_VER
 }
 
 
 __forceinline static void RoundToUnsignedInt(unsigned int* anInt, const float aFloat)
 {
-/*#ifdef _MSC_VER
-	__asm
-	{
-		fld aFloat
-		mov eax, anInt
-		fistp dword ptr [eax]
-	}
-	assert(*anInt == (unsigned int) (aFloat + 0.5f));
-#else // not _MSC_VER*/
 	*anInt = (unsigned int) (aFloat + 0.5f);
-//#endif // not _MSC_VER
 }
 
 
 __forceinline static int RoundToInt(const float aFloat)
 {
-/*#ifdef _MSC_VER
-	int i;
-	__asm
-	{
-		fld aFloat
-		fistp i
-	}
-	assert(i == (int) (aFloat + 0.5f));
-	return i;
-#else // not _MSC_VER*/
 	return (int) (aFloat + 0.5f);
-//#endif // not _MSC_VER
 }
 
 
 __forceinline static unsigned int RoundToUnsignedInt(const float aFloat)
 {
-/*#ifdef _MSC_VER
-	int i;
-	__asm
-	{
-		fld aFloat
-		fistp i
-	}
-	assert(i == (unsigned int) (aFloat + 0.5f));
-	return i;
-#else // not _MSC_VER*/
 	return (unsigned int) (aFloat + 0.5f);
-//#endif // not _MSC_VER
 }
 
 

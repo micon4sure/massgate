@@ -26,8 +26,6 @@
 // marks the thread as free.
 void MT_Task::Execute()
 {
-	CT_ASSERT(sizeof(MT_Task) == 64);	// We always want this for cache efficiency.
-
 	myFunctionPointer(&myData);
 
 	if (myJob)
@@ -61,10 +59,6 @@ void* MT_Task::operator new(size_t aSize)
 			_InterlockedDecrement(&locQuickMutex);
 			return p;
 		}
-#if IS_PC_BUILD
-		__asm wait
-		__asm wait
-#endif
 		// MSV:NW - Is there a nop instruction or something similar on the 360?
 	}
 
@@ -92,10 +86,6 @@ void MT_Task::operator delete(void* aPointer)
 			return;
 		}
 
-#if IS_PC_BUILD
-		__asm wait
-		__asm wait
-#endif
 		// MSV:NW - Is there a nop instruction or something similar on the 360?
 	}
 

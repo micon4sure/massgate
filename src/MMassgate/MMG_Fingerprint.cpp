@@ -27,14 +27,11 @@
 #include "MC_Mem.h"
 
 #if IS_PC_BUILD
-	// Emit a (false) jump to (misaligned) instruction; following instructions will be decoded incorrectly by ida pro 4.8
-	#define MISALIGNED_JUMP		__asm { __asm push eax __asm  cmp eax, eax __asm jz label1 __asm _emit 0x0f __asm label1: __asm pop eax }
-
-	// Emit a false return from function. IDA Pro 4.8 will generate garbage for a while before it resyncs
-	#define FALSE_RETURN		__asm { __asm	push ecx __asm	push ebx __asm	push edx __asm	mov ebx, esp __asm	mov esp, ebp __asm	pop ebp __asm	pop ecx __asm	lea edx, labelFALSERETURN __asm	push edx __asm	ret __asm	_emit 0x0F __asm labelFALSERETURN: __asm	push ecx __asm	push ebp __asm	mov ebp, esp __asm	mov esp, ebx __asm	pop edx __asm	pop ebx __asm	pop ecx }
+#define MISALIGNED_JUMP {}
+#define FALSE_RETURN {}
 #else
-	#define MISALIGNED_JUMP {}
-	#define FALSE_RETURN {}
+#define MISALIGNED_JUMP {}
+#define FALSE_RETURN {}
 #endif
 
 // Fingerprint these function - NOTE! Do not use any GetProcAddress() etc functions as they are easy to find in

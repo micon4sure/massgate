@@ -560,10 +560,10 @@ void MC_Debug::DebugMessageNoFormat(const char *aMessage)
 {
 #ifndef MC_NO_DEBUG_FILE_OUTPUT
 	_InterlockedIncrement(&locNumConcurrentOutputs);
-	for (int i = 0; i < locNumDebugListeners; i++)
-		if (locOurDebugListeners[i].active)
-			locOurDebugListeners[i].listener->DebugMessage(aMessage);
-	_InterlockedDecrement(&locNumConcurrentOutputs);
+	//	for( int i=0; i<locNumDebugListeners; i++ )
+	//		if (locOurDebugListeners[i].active)
+	//			locOurDebugListeners[i].listener->DebugMessage( aMessage );
+	//	_InterlockedDecrement(&locNumConcurrentOutputs);
 
 #endif
 }
@@ -843,7 +843,7 @@ void MC_Debug::ErrorMessageNoFormat(const char *aMessage, const char *aCodeLine)
 	}
 
 	// Output debug to file.
-	if (shhh == false)
+	if (false && shhh == false)
 	{
 		MC_StaticString<32 * 1024> longRow;
 		longRow[0] = 0;

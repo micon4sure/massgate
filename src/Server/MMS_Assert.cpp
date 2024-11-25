@@ -64,5 +64,5 @@ MMS_Assert(
 	}
 
 	char* p = NULL; 
-	p[0] = 0; 
+	//p[0] = 0; 
 }

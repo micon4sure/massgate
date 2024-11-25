@@ -1,3 +1,4 @@
+.vs
 build
 massgate_log_*.txt
 massgate_sql_*.txt
