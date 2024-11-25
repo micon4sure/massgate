@@ -11,8 +11,8 @@ SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 CREATE DATABASE IF NOT EXISTS live;
 USE live;
 
-GRANT ALL ON live.* TO 'massgateadmin'@'localhost' IDENTIFIED BY '8fesfsdBOrwe';
-GRANT SELECT ON live.* TO 'massgateclient'@'localhost' IDENTIFIED BY 'po389ef0sS';
+GRANT ALL ON live.* TO 'massgateadmin'@'localhost' IDENTIFIED BY 'naydNP5WJLHeW3';
+GRANT SELECT ON live.* TO 'massgateclient'@'localhost' IDENTIFIED BY '2dv0WKM4vZqMNE';
 FLUSH PRIVILEGES;
 
 -- --------------------------------------------------------
